@@ -65,6 +65,7 @@ namespace KTL
                 }
             }
             _game.Colors = colorList;
+            CheckButtonStart();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -82,6 +83,7 @@ namespace KTL
             {
                 _game.Fields = new List<Tuple<Color, bool>>();
             }
+            CheckButtonStart();
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -94,12 +96,33 @@ namespace KTL
             {
                 _game.K = 0;
             }
+            CheckButtonStart();
+        }
+
+        private void CheckButtonStart()
+        {
+            if (_game == null)
+            {
+                button1.Enabled = false;
+            }
+            else
+            {
+                if (_game.K > 0 && _game.Colors != null && _game.Colors.Count > 0 && _game.Fields != null
+                    && _game.Fields.Count > 0)
+                {
+                    button1.Enabled = true;
+                }
+                else
+                {
+                    button1.Enabled = false;
+                }
+            }
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e)
         {
             colorsPanel.Controls.Clear();
-            int colors = _game.Colors.Count;
+            int colors = _game.Colors != null ? _game.Colors.Count : 0;
             if (colors > 0)
             {
                 int width = colorsPanel.Width;

@@ -27,6 +27,7 @@ namespace KTL
         {
             colorsPanel.Controls.Clear();
             int colors = _game.Colors.Count;
+            label_c.Text = colors.ToString();
             if (colors > 0)
             {
                 int width = colorsPanel.Width;
@@ -70,6 +71,8 @@ namespace KTL
         {
             panelNumbers.Controls.Clear();
             int numbers = _game.Fields.Count;
+            label_n.Text = numbers.ToString();
+            label_k.Text = _game.K.ToString();
             if (numbers > 0)
             {
                 int width = panelNumbers.Width;

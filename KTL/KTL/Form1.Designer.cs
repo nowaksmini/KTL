@@ -134,6 +134,7 @@
             // 
             this.button1.BackColor = System.Drawing.SystemColors.Control;
             this.button1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button1.Enabled = false;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.25F);
             this.button1.Location = new System.Drawing.Point(10, 348);
             this.button1.Margin = new System.Windows.Forms.Padding(0);
