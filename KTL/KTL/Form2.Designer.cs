@@ -32,6 +32,11 @@
             this.panelNumbers = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label_c = new System.Windows.Forms.Label();
+            this.label_k = new System.Windows.Forms.Label();
+            this.label_n = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -41,10 +46,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.label_n = new System.Windows.Forms.Label();
-            this.label_k = new System.Windows.Forms.Label();
-            this.label_c = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -83,6 +84,7 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.button2);
             this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.label_c);
             this.panel5.Controls.Add(this.label_k);
@@ -95,6 +97,55 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(441, 80);
             this.panel5.TabIndex = 4;
+            // 
+            // button2
+            // 
+            this.button2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.button2.Location = new System.Drawing.Point(291, 0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 80);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "cofnij";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 25.25F);
+            this.button1.Location = new System.Drawing.Point(366, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 80);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "?";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label_c
+            // 
+            this.label_c.AutoSize = true;
+            this.label_c.Location = new System.Drawing.Point(206, 54);
+            this.label_c.Name = "label_c";
+            this.label_c.Size = new System.Drawing.Size(35, 13);
+            this.label_c.TabIndex = 5;
+            this.label_c.Text = "label8";
+            // 
+            // label_k
+            // 
+            this.label_k.AutoSize = true;
+            this.label_k.Location = new System.Drawing.Point(206, 28);
+            this.label_k.Name = "label_k";
+            this.label_k.Size = new System.Drawing.Size(35, 13);
+            this.label_k.TabIndex = 4;
+            this.label_k.Text = "label7";
+            // 
+            // label_n
+            // 
+            this.label_n.AutoSize = true;
+            this.label_n.Location = new System.Drawing.Point(206, 4);
+            this.label_n.Name = "label_n";
+            this.label_n.Size = new System.Drawing.Size(35, 13);
+            this.label_n.TabIndex = 3;
+            this.label_n.Text = "label6";
             // 
             // label5
             // 
@@ -178,44 +229,6 @@
             this.panel4.Size = new System.Drawing.Size(634, 197);
             this.panel4.TabIndex = 4;
             // 
-            // label_n
-            // 
-            this.label_n.AutoSize = true;
-            this.label_n.Location = new System.Drawing.Point(206, 4);
-            this.label_n.Name = "label_n";
-            this.label_n.Size = new System.Drawing.Size(35, 13);
-            this.label_n.TabIndex = 3;
-            this.label_n.Text = "label6";
-            // 
-            // label_k
-            // 
-            this.label_k.AutoSize = true;
-            this.label_k.Location = new System.Drawing.Point(206, 28);
-            this.label_k.Name = "label_k";
-            this.label_k.Size = new System.Drawing.Size(35, 13);
-            this.label_k.TabIndex = 4;
-            this.label_k.Text = "label7";
-            // 
-            // label_c
-            // 
-            this.label_c.AutoSize = true;
-            this.label_c.Location = new System.Drawing.Point(206, 54);
-            this.label_c.Name = "label_c";
-            this.label_c.Size = new System.Drawing.Size(35, 13);
-            this.label_c.TabIndex = 5;
-            this.label_c.Text = "label8";
-            // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 25.25F);
-            this.button1.Location = new System.Drawing.Point(366, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 80);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "?";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,7 +238,7 @@
             this.Controls.Add(this.panel3);
             this.Name = "Form2";
             this.Text = "Anty-Van der Waerden ";
-            this.ResizeEnd += new System.EventHandler(this.Form2_ResizeEnd);
+            this.SizeChanged += new System.EventHandler(this.Form2_Resize);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel5.ResumeLayout(false);
@@ -257,5 +270,6 @@
         private System.Windows.Forms.Label label_k;
         private System.Windows.Forms.Label label_n;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }

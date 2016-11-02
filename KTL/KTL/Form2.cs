@@ -88,7 +88,7 @@ namespace KTL
                 for (int i = 0; i < numbers; i++)
                 {
                     Button control = new Button();
-                    control.BackColor = _game.Fields[i].Item1;
+                    control.BackColor = _game.Fields[i].Item1.Item1;
                     control.Size = new Size(colorSize, colorSize);
                     if (startX + colorSize >= width)
                     {
@@ -102,7 +102,8 @@ namespace KTL
                     control.Location = new Point(startX, startY);
                     control.Click += (s, args) =>
                     {
-                        _game.Fields[panelNumbers.Controls.GetChildIndex(control)] = Tuple.Create(_actualColor, false);
+                        _game.Fields[panelNumbers.Controls.GetChildIndex(control)] = Tuple.Create(Tuple.Create(_actualColor,
+                            _game.Fields[panelNumbers.Controls.GetChildIndex(control)].Item1.Item2), false);
                         control.BackColor = _actualColor;
                         control.Enabled = false;
                         control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
@@ -113,7 +114,7 @@ namespace KTL
             }
         }
 
-        private void Form2_ResizeEnd(object sender, EventArgs e)
+        private void Form2_Resize(object sender, EventArgs e)
         {
             InitializeColorPanel();
             InitializeNumberPanel();

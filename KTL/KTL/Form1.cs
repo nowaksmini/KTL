@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KTL
@@ -13,11 +8,19 @@ namespace KTL
     public partial class Form1 : Form
     {
         private Game _game;
+        private Button[] _computerLevelButtons;
+        private Button[] _humanLevelButtons;
 
         public Form1()
         {
             InitializeComponent();
             _game = new Game();
+            _computerLevelButtons = new Button[5] { button7, button8, button9, button10, button11 };
+            _humanLevelButtons = new Button[5] { button2, button3, button4, button5, button6 };
+            _game.ComputerLevel = 2;
+            _game.HumanLevel = 1;
+            UpdateComputerLevel();
+            UpdateHumanLevel();
         }
 
         private void textBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -72,16 +75,16 @@ namespace KTL
         {
             if (textBox1.Text != null && textBox1.Text.Length != 0)
             {
-                _game.Fields = new List<Tuple<Color, bool>>();
+                _game.Fields = new List<Tuple<Tuple<Color, bool>, bool>>();
                 int n = Int32.Parse(textBox1.Text);
                 for (int i = 0; i < n; i++)
                 {
-                    _game.Fields.Add(Tuple.Create(Color.White, true));
+                    _game.Fields.Add(Tuple.Create(Tuple.Create(Color.White, false), true));
                 }
             }
             else
             {
-                _game.Fields = new List<Tuple<Color, bool>>();
+                _game.Fields = new List<Tuple<Tuple<Color, bool>, bool>>();
             }
             CheckButtonStart();
         }
@@ -119,7 +122,7 @@ namespace KTL
             }
         }
 
-        private void Form1_ResizeEnd(object sender, EventArgs e)
+        private void Form1_Resize(object sender, EventArgs e)
         {
             colorsPanel.Controls.Clear();
             int colors = _game.Colors != null ? _game.Colors.Count : 0;
@@ -158,6 +161,82 @@ namespace KTL
             form2.Closed += (s, args) => this.Show();
             form2.Show();
             this.Hide();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            _game.HumanLevel = 0;
+            UpdateHumanLevel();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            _game.HumanLevel = 1;
+            UpdateHumanLevel();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            _game.HumanLevel = 2;
+            UpdateHumanLevel();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            _game.HumanLevel = 3;
+            UpdateHumanLevel();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            _game.HumanLevel = 4;
+            UpdateHumanLevel();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            _game.ComputerLevel = 0;
+            UpdateComputerLevel();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            _game.ComputerLevel = 1;
+            UpdateComputerLevel();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            _game.ComputerLevel = 2;
+            UpdateComputerLevel();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            _game.ComputerLevel = 3;
+            UpdateComputerLevel();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            _game.ComputerLevel = 4;
+            UpdateComputerLevel();
+        }
+
+        private void UpdateComputerLevel()
+        {
+            for (int i = 0; i < _computerLevelButtons.Length; i++)
+            {
+                _computerLevelButtons[i].BackColor = i == _game.ComputerLevel ? Color.CadetBlue : Color.WhiteSmoke;
+            }
+        }
+
+        private void UpdateHumanLevel()
+        {
+            for (int i = 0; i < _humanLevelButtons.Length; i++)
+            {
+                _humanLevelButtons[i].BackColor = i == _game.HumanLevel ? Color.CadetBlue : Color.WhiteSmoke;
+            }
         }
     }
 
