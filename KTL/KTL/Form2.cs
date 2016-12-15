@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
@@ -7,8 +8,9 @@ namespace KTL
 {
     public partial class Form2 : Form
     {
-        private Game _game;
+        private Game game;
         private Color _actualColor;
+        private bool? victory;
 
         public Form2()
         {
@@ -17,7 +19,8 @@ namespace KTL
 
         public Form2(Game _game)
         {
-            this._game = _game;
+            game = _game;
+            game.NewGame();
             InitializeComponent();
             InitializeColorPanel();
             InitializeNumberPanel();
@@ -26,7 +29,7 @@ namespace KTL
         private void InitializeColorPanel()
         {
             colorsPanel.Controls.Clear();
-            int colors = _game.Colors.Count;
+            int colors = game.Colors.Count;
             label_c.Text = colors.ToString();
             if (colors > 0)
             {
@@ -42,13 +45,13 @@ namespace KTL
                 Random r = new Random();
                 if (_actualColor.A == 0)
                 {
-                    _actualColor = _game.Colors[0];
+                    _actualColor = game.Colors[0];
                     actualColorPanel.BackColor = _actualColor;
                 }
                 for (int i = 0; i < colors; i++)
                 {
                     Button control = new Button();
-                    control.BackColor = _game.Colors[i];
+                    control.BackColor = game.Colors[i];
                     control.Size = new Size(colorSize, colorSize);
                     if (startX + colorSize >= width)
                     {
@@ -70,9 +73,9 @@ namespace KTL
         private void InitializeNumberPanel()
         {
             panelNumbers.Controls.Clear();
-            int numbers = _game.Fields.Count;
+            int numbers = game.Fields.Count;
             label_n.Text = numbers.ToString();
-            label_k.Text = _game.K.ToString();
+            label_k.Text = game.K.ToString();
             if (numbers > 0)
             {
                 int width = panelNumbers.Width;
@@ -88,31 +91,45 @@ namespace KTL
                 for (int i = 0; i < numbers; i++)
                 {
                     Button control = new Button();
-                    control.BackColor = _game.Fields[i].Item1.Item1;
+                    control.BackColor = game.Fields[i].Color;
                     control.Size = new Size(colorSize, colorSize);
                     if (startX + colorSize >= width)
                     {
                         startX = 0;
                         startY = startY + colorSize;
                     }
-                    control.Enabled = _game.Fields[i].Item2;
+                    control.Enabled = game.Fields[i].Enabled;
                     control.Text = (i + 1).ToString();
                     control.Font = new Font(new FontFamily(GenericFontFamilies.Monospace), colorSize / 4);
                     control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
                     control.Location = new Point(startX, startY);
-                    control.Click += (s, args) =>
-                    {
-                        _game.Fields[panelNumbers.Controls.GetChildIndex(control)] = Tuple.Create(Tuple.Create(_actualColor,
-                            _game.Fields[panelNumbers.Controls.GetChildIndex(control)].Item1.Item2), false);
-                        control.BackColor = _actualColor;
-                        control.Enabled = false;
-                        control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
-                    };
+                    control.Click += FieldClick;
                     panelNumbers.Controls.Add(control);
                     startX = (startX + colorSize);
                 }
             }
         }
+
+        private void FieldClick(object sender, EventArgs e)
+        {
+            if (victory.HasValue) return;
+            var control = (Button)sender;
+            game.Fields[panelNumbers.Controls.GetChildIndex(control)] = new Field
+            {
+                Color = _actualColor,
+                Enabled = false
+            };
+            control.BackColor = _actualColor;
+            control.Enabled = false;
+            control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
+            victory=game.VerifyVictory();
+            game.ComputerStep();
+            InitializeNumberPanel();
+        }
+
+        
+
+        
 
         private void Form2_Resize(object sender, EventArgs e)
         {

@@ -75,16 +75,20 @@ namespace KTL
         {
             if (textBox1.Text != null && textBox1.Text.Length != 0)
             {
-                _game.Fields = new List<Tuple<Tuple<Color, bool>, bool>>();
+                _game.Fields = new List<Field>();
                 int n = Int32.Parse(textBox1.Text);
                 for (int i = 0; i < n; i++)
                 {
-                    _game.Fields.Add(Tuple.Create(Tuple.Create(Color.White, false), true));
+                    _game.Fields.Add(new Field
+                    {
+                        Color = Color.White,
+                        Enabled = true
+                    });
                 }
             }
             else
             {
-                _game.Fields = new List<Tuple<Tuple<Color, bool>, bool>>();
+                _game.Fields = new List<Field>();
             }
             CheckButtonStart();
         }
