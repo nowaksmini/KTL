@@ -39,6 +39,7 @@ namespace KTL
             var usedColors = changeProgression.Select(index => Fields[index].Color).ToList();
             var validColors = Colors.Where(c => !usedColors.Contains(c));
             double validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+
             int notChangedValidFields = 0;
             var r2 = r.NextDouble();
             for (int i = 0; i < changeProgression.Count; i++)
@@ -128,6 +129,44 @@ namespace KTL
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
                         Fields[i].Select(Colors[r.Next(Colors.Count - 1)]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        internal void ShowHint()
+        {
+            switch (HumanLevel)
+            {
+                case 1:
+                    HintLevel1();
+                    break;
+                default:
+                    MessageBox.Show("Nie zaimplementowano tego poziomu.");
+                    break;
+            }
+        }
+
+        private void HintLevel1()
+        {
+            var r = new Random();
+            var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
+            var validColors = changeProgression.Where(index=>!Fields[index].IsEmpty()).Select(index => Fields[index].Color);
+            if (!validColors.Any()) validColors = Colors;
+            var color = Colors.IndexOf(validColors.ToList()[r.Next(validColors.Count() - 1)]);
+
+            var validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+            int notChangedValidFields = 0;
+            var r2 = r.NextDouble();
+            for (int i = 0; i < changeProgression.Count; i++)
+            {
+                if (Fields[changeProgression[i]].IsEmpty())
+                {
+                    notChangedValidFields++;
+                    if (notChangedValidFields / validFieldsCount > r2)
+                    {
+                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", changeProgression[i], color));
                         break;
                     }
                 }

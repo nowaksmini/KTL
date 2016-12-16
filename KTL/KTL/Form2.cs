@@ -64,6 +64,7 @@ namespace KTL
                     };
                     control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
                     control.Location = new Point(startX, startY);
+                    control.Text = i.ToString();
                     colorsPanel.Controls.Add(control);
                     startX = (startX + colorSize);
                 }
@@ -122,19 +123,24 @@ namespace KTL
             control.BackColor = _actualColor;
             control.Enabled = false;
             control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
-            victory=game.VerifyVictory();
+            victory = game.VerifyVictory();
             game.ComputerStep();
             InitializeNumberPanel();
         }
 
-        
 
-        
+
+
 
         private void Form2_Resize(object sender, EventArgs e)
         {
             InitializeColorPanel();
             InitializeNumberPanel();
+        }
+
+        private void hintButton_Click(object sender, EventArgs e)
+        {
+            game.ShowHint();
         }
     }
 }
