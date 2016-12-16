@@ -18,7 +18,7 @@ namespace KTL
             _computerLevelButtons = new Button[5] { button7, button8, button9, button10, button11 };
             _humanLevelButtons = new Button[5] { button2, button3, button4, button5, button6 };
             _game.ComputerLevel = 2;
-            _game.HumanLevel = 1;
+            _game.HumanLevel = 2;
             UpdateComputerLevel();
             UpdateHumanLevel();
         }
@@ -169,61 +169,61 @@ namespace KTL
 
         private void button2_Click(object sender, EventArgs e)
         {
-            _game.HumanLevel = 0;
+            _game.HumanLevel = 1;
             UpdateHumanLevel();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _game.HumanLevel = 1;
+            _game.HumanLevel = 2;
             UpdateHumanLevel();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            _game.HumanLevel = 2;
+            _game.HumanLevel = 3;
             UpdateHumanLevel();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            _game.HumanLevel = 3;
+            _game.HumanLevel = 4;
             UpdateHumanLevel();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            _game.HumanLevel = 4;
+            _game.HumanLevel = 5;
             UpdateHumanLevel();
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            _game.ComputerLevel = 0;
+            _game.ComputerLevel = 1;
             UpdateComputerLevel();
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            _game.ComputerLevel = 1;
+            _game.ComputerLevel = 2;
             UpdateComputerLevel();
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            _game.ComputerLevel = 2;
+            _game.ComputerLevel = 3;
             UpdateComputerLevel();
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            _game.ComputerLevel = 3;
+            _game.ComputerLevel = 4;
             UpdateComputerLevel();
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            _game.ComputerLevel = 4;
+            _game.ComputerLevel = 5;
             UpdateComputerLevel();
         }
 
@@ -231,7 +231,7 @@ namespace KTL
         {
             for (int i = 0; i < _computerLevelButtons.Length; i++)
             {
-                _computerLevelButtons[i].BackColor = i == _game.ComputerLevel ? Color.CadetBlue : Color.WhiteSmoke;
+                _computerLevelButtons[i].BackColor = i + 1 == _game.ComputerLevel ? Color.CadetBlue : Color.WhiteSmoke;
             }
         }
 
@@ -239,7 +239,7 @@ namespace KTL
         {
             for (int i = 0; i < _humanLevelButtons.Length; i++)
             {
-                _humanLevelButtons[i].BackColor = i == _game.HumanLevel ? Color.CadetBlue : Color.WhiteSmoke;
+                _humanLevelButtons[i].BackColor = i + 1 == _game.HumanLevel ? Color.CadetBlue : Color.WhiteSmoke;
             }
         }
     }
