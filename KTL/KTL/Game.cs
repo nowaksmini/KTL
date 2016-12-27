@@ -215,9 +215,41 @@ namespace KTL
                 case 3:
                     HintLevel2();
                     break;
+                case 4:
+                    HintLevel3();
+                    break;
                 default:
                     MessageBox.Show("Nie zaimplementowano tego poziomu.");
                     break;
+            }
+        }
+
+        private void HintLevel3()
+        {
+            HintUsedColor(Progressions[0]);
+        }
+
+        private void HintUsedColor(List<int> progression)
+        {
+            var r = new Random();
+            var validColors = progression.Where(index => !Fields[index].IsEmpty()).Select(index => Fields[index].Color);
+            if (!validColors.Any()) validColors = Colors;
+            var color = Colors.IndexOf(validColors.ToList()[r.Next(validColors.Count() - 1)]);
+
+            var validFieldsCount = progression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+            int notChangedValidFields = 0;
+            var r2 = r.NextDouble();
+            for (int i = 0; i < progression.Count; i++)
+            {
+                if (Fields[progression[i]].IsEmpty())
+                {
+                    notChangedValidFields++;
+                    if (notChangedValidFields / validFieldsCount > r2)
+                    {
+                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", progression[i]+1, color));
+                        break;
+                    }
+                }
             }
         }
 
@@ -225,25 +257,7 @@ namespace KTL
         {
             var r = new Random();
             var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
-            var validColors = changeProgression.Where(index => !Fields[index].IsEmpty()).Select(index => Fields[index].Color);
-            if (!validColors.Any()) validColors = Colors;
-            var color = Colors.IndexOf(validColors.ToList()[r.Next(validColors.Count() - 1)]);
-
-            var validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
-            int notChangedValidFields = 0;
-            var r2 = r.NextDouble();
-            for (int i = 0; i < changeProgression.Count; i++)
-            {
-                if (Fields[changeProgression[i]].IsEmpty())
-                {
-                    notChangedValidFields++;
-                    if (notChangedValidFields / validFieldsCount > r2)
-                    {
-                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", changeProgression[i], color));
-                        break;
-                    }
-                }
-            }
+            HintUsedColor(changeProgression);
         }
 
         /// <summary>

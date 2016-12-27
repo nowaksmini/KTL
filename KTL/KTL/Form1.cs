@@ -79,11 +79,7 @@ namespace KTL
                 int n = Int32.Parse(textBox1.Text);
                 for (int i = 0; i < n; i++)
                 {
-                    _game.Fields.Add(new Field
-                    {
-                        Color = Color.White,
-                        Enabled = true
-                    });
+                    _game.Fields.Add(new Field());
                 }
             }
             else

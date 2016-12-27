@@ -28,6 +28,7 @@ namespace KTL
 
         private void InitializeColorPanel()
         {
+            if (colorsPanel.Width == 0) return;
             colorsPanel.Controls.Clear();
             int colors = game.Colors.Count;
             label_c.Text = colors.ToString();
@@ -115,16 +116,12 @@ namespace KTL
         {
             if (victory.HasValue) return;
             var control = (Button)sender;
-            game.Fields[panelNumbers.Controls.GetChildIndex(control)] = new Field
-            {
-                Color = _actualColor,
-                Enabled = false
-            };
+            game.Fields[panelNumbers.Controls.GetChildIndex(control)].Disable(_actualColor);
             control.BackColor = _actualColor;
             control.Enabled = false;
             control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
             victory = game.VerifyVictory();
-            game.ComputerStep();
+            if(!victory.HasValue) game.ComputerStep();
             InitializeNumberPanel();
         }
 
