@@ -125,10 +125,6 @@ namespace KTL
             InitializeNumberPanel();
         }
 
-
-
-
-
         private void Form2_Resize(object sender, EventArgs e)
         {
             InitializeColorPanel();

@@ -15,29 +15,26 @@ namespace KTL
         public int ComputerLevel { get; set; }
         public List<List<int>> Progressions { get; private set; }
 
-        public void ComputerStep()
+        public Tuple<int, int> ComputerStep()
         {
             if (Progressions.Count == 0)
             {
-                return;
+                return null;
             }
             switch (ComputerLevel)
             {
                 case 1:
-                    ComputerStepLevel1();
-                    break;
+                    return ComputerStepLevel1();
                 case 2:
-                    ComputerStepLevel2();
-                    break;
+                    return ComputerStepLevel2();
                 case 3:
-                    ComputerStepLevel3();
-                    break;
+                    return ComputerStepLevel3();
                 case 4:
-                    ComputerStepLevel4();
-                    break;
+                    return ComputerStepLevel4();
                 case 5:
-                    ComputerStepLevel5();
-                    break;
+                    return ComputerStepLevel5();
+                default:
+                    return null;
             }
             VerifyVictory();
         }
@@ -46,7 +43,7 @@ namespace KTL
         {
             Colors = new List<Color>();
             var r = new Random();
-            for(int i=0; i < colorCount; i++)
+            for (int i = 0; i < colorCount; i++)
             {
                 Colors.Add(Color.FromArgb(r.Next() | (255 << 24)));
             }
@@ -58,7 +55,7 @@ namespace KTL
         /// pole - losowo wybrana liczba i z przedziału [1,n], dla której pole pi jestjeszcze niepokolorowane
         /// Podczas losowania danych wartości nie jest wykorzystywana kolejka priorytetowa.
         /// </summary>
-        private void ComputerStepLevel1()
+        private Tuple<int, int> ComputerStepLevel1()
         {
             var r = new Random();
             double validFieldsCount = Fields.Sum(f => f.Enabled ? 1 : 0);
@@ -71,11 +68,13 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[i].Select(Colors[r.Next(Colors.Count - 1)]);
-                        break;
+                        int colorIndex = r.Next(Colors.Count - 1);
+                        Fields[i].Select(Colors[colorIndex]);
+                        return Tuple.Create(i, colorIndex);
                     }
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -83,7 +82,7 @@ namespace KTL
         /// Wybranie dowolnego niepokolorowanego jeszcze pola w ciągu ai oraz dowolnego koloru z dostępnej puli kolorów 
         /// jeszcze nieużytych w wylosowanym ciągu ai.
         /// </summary>
-        private void ComputerStepLevel2()
+        private Tuple<int, int> ComputerStepLevel2()
         {
             var r = new Random();
             var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
@@ -100,11 +99,13 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
-                        break;
+                        int colorIndex = Colors.FindIndex(x => x == validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        Fields[changeProgression[i]].Select(Colors[colorIndex]);
+                        return Tuple.Create(changeProgression[i], colorIndex);
                     }
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -114,7 +115,7 @@ namespace KTL
         /// w ciągu ai. Wybranie dowolnego niepokolorowanego jeszcze pola w wylosowanym ciągu ai oraz 
         /// dowolnego koloru z dostępnej puli kolorów jeszcze nie użytych w ciągu ai.
         /// </summary>
-        private void ComputerStepLevel3()
+        private Tuple<int, int> ComputerStepLevel3()
         {
             var r = new Random();
 
@@ -156,11 +157,13 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
-                        break;
+                        int colorIndex = Colors.FindIndex(x => x == validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        Fields[changeProgression[i]].Select(Colors[colorIndex]);
+                        return Tuple.Create(changeProgression[i], colorIndex);
                     }
                 }
             }
+            return null;
         }
 
         public void SelectField(int index, Color color)
@@ -173,7 +176,7 @@ namespace KTL
         /// Z wybranego ciągu ai losowane jest jeszcze niepokolorowane pole oraz kolor nie występujący do tej 
         /// pory w ciągu ai.
         /// </summary>
-        private void ComputerStepLevel4()
+        private Tuple<int, int> ComputerStepLevel4()
         {
             var r = new Random();
             var changeProgression = Progressions[0];
@@ -190,11 +193,13 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
-                        break;
+                        int colorIndex = Colors.FindIndex(x => x == validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        Fields[changeProgression[i]].Select(Colors[colorIndex]);
+                        return Tuple.Create(changeProgression[i], colorIndex);
                     }
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -216,7 +221,7 @@ namespace KTL
         /// Wybierany jest taki ciąg ai, dla którego waga tmpweight_i jest największa.
         /// Wówczas w swoim ruchu komputer wybiera pole o numerze l oraz j-tykolor.
         /// </summary>
-        private void ComputerStepLevel5()
+        private Tuple<int, int> ComputerStepLevel5()
         {
             var maxPriorityProgressions = new List<Tuple<List<int>, int>>(); // para(ciąg,waga_ciągu)
             int maxValidFieldsCount = Progressions[0].Sum(index => Fields[index].IsEmpty() ? 1 : 0);
@@ -331,6 +336,7 @@ namespace KTL
                 }
             }
             Fields[selectedField].Select(selectedColor);
+            return Tuple.Create(selectedField, Colors.FindIndex(x => x == selectedColor));
         }
 
         internal void NewGame()
@@ -413,22 +419,22 @@ namespace KTL
             switch (HumanLevel)
             {
                 case 1:
-                    if(showMessage) MessageBox.Show("Brak wskazówek dla gracza");
+                    if (showMessage) MessageBox.Show("Brak wskazówek dla gracza");
                     return null;
                 case 2:
-                    hint=HintLevel2();
+                    hint = HintLevel2();
                     break;
                 case 3:
-                    hint=HintLevel3();
+                    hint = HintLevel3();
                     break;
                 case 4:
-                    hint=HintLevel4();
+                    hint = HintLevel4();
                     break;
                 case 5:
-                    hint=HintLevel5();
+                    hint = HintLevel5();
                     break;
                 default:
-                    if(showMessage) MessageBox.Show("Nieznany poziom.");
+                    if (showMessage) MessageBox.Show("Nieznany poziom.");
                     return null;
             }
             return hint;
