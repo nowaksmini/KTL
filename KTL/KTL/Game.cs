@@ -382,7 +382,7 @@ namespace KTL
             return null;
         }
 
-        private void UpdateValidProgressions()
+        public void UpdateValidProgressions()
         {
             Progressions.RemoveAll(p => !IsCorrect(p));
             SortProgressions();
