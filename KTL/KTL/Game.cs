@@ -365,18 +365,18 @@ namespace KTL
             }
         }
 
-        public bool? VerifyVictory()
+        public bool? VerifyVictory(bool showMessage = true)
         {
             UpdateValidProgressions();
             var vinProgression = Progressions.FirstOrDefault(p => !p.Any(index => Fields[index].IsEmpty()));
             if (vinProgression != null)
             {
-                MessageBox.Show("Komputer wygrał. " + string.Join(", ", vinProgression.Select(index => index + 1)));
+                if(showMessage) MessageBox.Show("Komputer wygrał. " + string.Join(", ", vinProgression.Select(index => index + 1)));
                 return false;
             }
             if (Progressions.Count == 0)
             {
-                MessageBox.Show("Wygrał gracz!");
+                if(showMessage) MessageBox.Show("Wygrał gracz!");
                 return true;
             }
             return null;

@@ -22,13 +22,29 @@ namespace KTL.Test
             game.K = 3;
         }
         [TestMethod]
-        public void VinTest()
+        public void VinTest1()
         {
+            ClearFields();
             game.Fields[0].Select(game.Colors[0]);
             game.Fields[1].Select(game.Colors[1]);
             game.Fields[2].Select(game.Colors[2]);
-            var result = game.VerifyVictory();
+            var result = game.VerifyVictory(false);
             Assert.AreEqual(true, result);
+        }
+        [TestMethod]
+        public void VinTest2()
+        {
+            ClearFields();
+            game.Fields[0].Select(game.Colors[0]);
+            game.Fields[2].Select(game.Colors[1]);
+            game.Fields[4].Select(game.Colors[2]);
+            var result = game.VerifyVictory(false);
+            Assert.AreEqual(true, result);
+        }
+
+        private void ClearFields()
+        {
+            game.Fields.ForEach(f => f.Enable());
         }
     }
 }
