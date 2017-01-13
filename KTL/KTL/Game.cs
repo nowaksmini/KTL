@@ -376,31 +376,40 @@ namespace KTL
             var colorIndexes = p.Where(index => !Fields[index].IsEmpty());
             return colorIndexes.Count() == colorIndexes.Select(index => Fields[index].Color).Distinct().Count();
         }
-
-        internal void ShowHint()
+        public void ShowHint()
+        {
+            var hint = GetHint();
+            if (hint != null) MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", hint.Item1, hint.Item2));
+        }
+        public Tuple<int, int> GetHint()
         {
             if (Progressions.Count == 0)
             {
-                return;
+                return null;
             }
+            Tuple<int, int> hint;
             switch (HumanLevel)
             {
                 case 1:
                     MessageBox.Show("Brak wskazówek dla gracza");
-                    break;
+                    return null;
                 case 2:
-                    HintLevel2();
+                    hint=HintLevel2();
                     break;
                 case 3:
-                    HintLevel3();
+                    hint=HintLevel3();
                     break;
                 case 4:
-                    HintLevel4();
+                    hint=HintLevel4();
                     break;
                 case 5:
-                    HintLevel5();
+                    hint=HintLevel5();
                     break;
+                default:
+                    MessageBox.Show("Nieznany poziom.");
+                    return null;
             }
+            return hint;
         }
 
         /// <summary>
@@ -409,11 +418,11 @@ namespace KTL
         ///  puli kolorów już użytych w wylosowanym ciągu ai. Jeżeli takiego koloru nie ma, 
         ///  losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
         /// </summary>
-        private void HintLevel2()
+        private Tuple<int, int> HintLevel2()
         {
             var r = new Random();
             var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
-            HintUsedColor(changeProgression);
+            return HintUsedColor(changeProgression);
         }
 
         /// <summary>
@@ -424,7 +433,7 @@ namespace KTL
         ///  dowolnego koloru z dostępnej puli kolorów już użytych w ciągu ai. 
         ///  Jeżeli takiego koloru nie ma, losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
         /// </summary>
-        private void HintLevel3()
+        private Tuple<int, int> HintLevel3()
         {
             var r = new Random();
 
@@ -463,11 +472,11 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", changeProgression[i] + 1, color));
-                        break;
+                        return new Tuple<int, int>(changeProgression[i] + 1, color);
                     }
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -475,12 +484,12 @@ namespace KTL
         ///  Z wybranego ciągu ai losowane jest jeszcze niepokolorowane pole oraz kolor występujący już w ciągu ai.
         ///  Jeżeli takiego koloru nie ma, losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
         /// </summary>
-        private void HintLevel4()
+        private Tuple<int, int> HintLevel4()
         {
-            HintUsedColor(Progressions[0]);
+            return HintUsedColor(Progressions[0]);
         }
 
-        private void HintUsedColor(List<int> progression)
+        private Tuple<int, int> HintUsedColor(List<int> progression)
         {
             var r = new Random();
             var validColors = progression.Where(index => !Fields[index].IsEmpty()).Select(index => Fields[index].Color);
@@ -497,11 +506,11 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", progression[i] + 1, color));
-                        break;
+                        return new Tuple<int, int>(progression[i] + 1, color);
                     }
                 }
             }
+            return null;
         }
 
         /// <summary>
@@ -521,7 +530,7 @@ namespace KTL
         /// + waga pierwszego pola z listy FieldList znajdującego się w ciągu ai a nie będącego jeszcze pokolorowanym.
         /// Wybierany jest taki ciąg ai, dla którego waga tmp weight_i jest największa. 
         /// </summary>
-        private void HintLevel5()
+        private Tuple<int, int> HintLevel5()
         {
             var maxPriorityProgressions = new List<Tuple<List<int>, int>>(); // para(ciąg,waga_ciągu)
             int maxValidFieldsCount = Progressions[0].Sum(index => Fields[index].IsEmpty() ? 1 : 0);
@@ -636,7 +645,7 @@ namespace KTL
                     selectedField = tmpSelectedFieldNumer;
                 }
             }
-            MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", selectedField + 1, Colors.IndexOf(selectedColor)));
+            return new Tuple<int, int>(selectedField + 1, Colors.IndexOf(selectedColor));
         }
     }
 }
