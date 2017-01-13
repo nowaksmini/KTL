@@ -100,6 +100,10 @@ namespace KTL
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
                         int colorIndex = Colors.FindIndex(x => x == validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        if (colorIndex < 0)
+                        {
+                            colorIndex = 0;
+                        }
                         Fields[changeProgression[i]].Select(Colors[colorIndex]);
                         return Tuple.Create(changeProgression[i], colorIndex);
                     }
@@ -194,6 +198,10 @@ namespace KTL
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
                         int colorIndex = Colors.FindIndex(x => x == validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        if(colorIndex < 0)
+                        {
+                            colorIndex = 0;
+                        }
                         Fields[changeProgression[i]].Select(Colors[colorIndex]);
                         return Tuple.Create(changeProgression[i], colorIndex);
                     }
