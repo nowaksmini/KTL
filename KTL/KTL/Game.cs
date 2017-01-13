@@ -324,8 +324,15 @@ namespace KTL
             Fields.ForEach(f => f.Enable());
             CreateProgressions();
         }
-
-        private void CreateProgressions()
+        public void CreateFields(int n)
+        {
+            Fields = new List<Field>();
+            for (int i = 0; i < n; i++)
+            {
+                Fields.Add(new Field());
+            }
+        }
+        public void CreateProgressions()
         {
             int n = Fields.Count();
             Progressions = new List<List<int>>();
@@ -381,7 +388,7 @@ namespace KTL
             var hint = GetHint();
             if (hint != null) MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", hint.Item1, hint.Item2));
         }
-        public Tuple<int, int> GetHint()
+        public Tuple<int, int> GetHint(bool showMessage = true)
         {
             if (Progressions.Count == 0)
             {
@@ -391,7 +398,7 @@ namespace KTL
             switch (HumanLevel)
             {
                 case 1:
-                    MessageBox.Show("Brak wskazówek dla gracza");
+                    if(showMessage) MessageBox.Show("Brak wskazówek dla gracza");
                     return null;
                 case 2:
                     hint=HintLevel2();
@@ -406,7 +413,7 @@ namespace KTL
                     hint=HintLevel5();
                     break;
                 default:
-                    MessageBox.Show("Nieznany poziom.");
+                    if(showMessage) MessageBox.Show("Nieznany poziom.");
                     return null;
             }
             return hint;

@@ -10,8 +10,13 @@ namespace KTL.Test
         public void HintLevel1()
         {
             var game = new Game();
+            game.CreateFields(20);
+            game.K = 4;
+            
+            game.CreateProgressions();
             game.HumanLevel = 1;
-            var hint = game.GetHint();
+            var hint = game.GetHint(false);
+            Assert.AreEqual(null, hint);
         }
     }
 }

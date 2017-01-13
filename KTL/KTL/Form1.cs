@@ -75,12 +75,8 @@ namespace KTL
         {
             if (textBox1.Text != null && textBox1.Text.Length != 0)
             {
-                _game.Fields = new List<Field>();
                 int n = Int32.Parse(textBox1.Text);
-                for (int i = 0; i < n; i++)
-                {
-                    _game.Fields.Add(new Field());
-                }
+                _game.CreateFields(n);
             }
             else
             {
@@ -89,6 +85,7 @@ namespace KTL
             CheckButtonStart();
         }
 
+        
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (textBox2.Text != null && textBox2.Text.Length != 0)
