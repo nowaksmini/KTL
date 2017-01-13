@@ -36,7 +36,6 @@ namespace KTL
                     ComputerStepLevel4();
                     break;
                 case 5:
-                    // TODO
                     ComputerStepLevel5();
                     break;
             }
@@ -197,14 +196,126 @@ namespace KTL
         /// w kolejce priorytetowej towaga P = 10. Elementy w liście FiledList posortowane są od największej  
         /// wartości  wagi  pola  do  najmniejszej.  Następuje  iteracja  po  każdym ciągu ai∈A. 
         /// Dla każdego ciągu ai ustawiana jest tzw. tymczasowa waga tmpweight_i, wyliczana na podstawie 
-        /// tmpweight_i = minus waga pierw-szego koloru z listyColorListnie wykorzystanego w ciągu_ai
+        /// tmpweight_i = - waga pierwszego koloru z listyColorListnie wykorzystanego w ciągu_ai
         //  plus waga pierwszego pola z listy FieldList znajdującego się w ciągu ai a nie będącego jeszcze pokolorowanym.
         /// Wybierany jest taki ciąg ai, dla którego waga tmpweight_i jest największa.
         /// Wówczas w swoim ruchu komputer wybiera pole o numerze l oraz j-tykolor.
         /// </summary>
         private void ComputerStepLevel5()
         {
-            MessageBox.Show("Nie zaimplementowano tego poziomu.");
+            var maxPriorityProgressions = new List<Tuple<List<int>, int>>(); // para(ciąg,waga_ciągu)
+            int maxValidFieldsCount = Progressions[0].Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+            var possibleColorsInBestOnesList = new List<Tuple<Color, int>>();
+            var possibleFiledsNumbersInBestOnesList = new List<Tuple<int, int>>();
+
+            foreach (var a in Progressions)
+            {
+                int aValidFieldsCount = a.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+                if (aValidFieldsCount == maxValidFieldsCount)
+                {
+                    maxPriorityProgressions.Add(Tuple.Create(a, 0));
+                    foreach (var index in a)
+                    {
+                        if (!Fields[index].Enabled)
+                        {
+                            Color c = Fields[index].Color;
+                            // dodajemy kolory, które jeszcze nie wystąpiły w pewnym najlepszym ciągu
+                            foreach (var cc in Colors)
+                            {
+                                if (!cc.Equals(c) && !possibleColorsInBestOnesList.Exists(x => x.Item1.Equals(cc)))
+                                {
+                                    possibleColorsInBestOnesList.Add(Tuple.Create(cc, 0));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // dodajemy pola, które można pokolorować
+                            if (!possibleFiledsNumbersInBestOnesList.Exists(x => x.Item1.Equals(index)))
+                            {
+                                possibleFiledsNumbersInBestOnesList.Add(Tuple.Create(index, 0));
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var a in Progressions)
+            {
+                foreach (var index in a)
+                {
+                    if (!Fields[index].Enabled)
+                    {
+                        Color c = Fields[index].Color;
+                        for (int i = 0; i < possibleColorsInBestOnesList.Count; i++)
+                        {
+                            if (possibleColorsInBestOnesList[i].Item1.Equals(c))
+                            {
+                                possibleColorsInBestOnesList[i] = Tuple.Create(c, possibleColorsInBestOnesList[i].Item2 + 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < possibleFiledsNumbersInBestOnesList.Count; i++)
+                        {
+                            if (possibleFiledsNumbersInBestOnesList[i].Item1.Equals(index))
+                            {
+                                possibleFiledsNumbersInBestOnesList[i] = Tuple.Create(index, possibleFiledsNumbersInBestOnesList[i].Item2 + 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            possibleColorsInBestOnesList.Sort((a, b) => a.Item2 - b.Item2);
+            possibleFiledsNumbersInBestOnesList.Sort((a, b) => b.Item2 - a.Item2);
+
+            int selectedField = -1;
+            Color selectedColor = Color.White;
+            int actualMaxWeight = Int32.MinValue;
+            foreach (var a in maxPriorityProgressions)
+            {
+                int maxFiledWeight = Int32.MinValue;
+                int minColorWeight = Int32.MaxValue;
+                int tmpSelectedFieldNumer = -1;
+                Color tmpSelectedColor = Color.White;
+                // iteracja po polach w ciągu
+                var possibleColors = new List<Color>(Colors);
+                foreach (var index in a.Item1)
+                {
+                    //pole w ciągu, które nie jest pokolorowane
+                    var possibleFiled = possibleFiledsNumbersInBestOnesList.Find(x => x.Item1 == index && Fields[index].Enabled);
+                    if (possibleFiled != null)
+                    {
+                        if (maxFiledWeight < possibleFiled.Item2)
+                        {
+                            maxFiledWeight = possibleFiled.Item2;
+                            tmpSelectedFieldNumer = index;
+                        }
+                    }
+                    // usuń potencjalny kolor jeżeli w ciągu już taki istnieje
+                    possibleColors.Remove(Fields[index].Color);
+                }
+                foreach (var c in possibleColors)
+                {
+                    // waga potencjalnego koloru
+                    int weight = possibleColorsInBestOnesList.Find(x => x.Item1 == c).Item2;
+                    if (weight < minColorWeight)
+                    {
+                        minColorWeight = weight;
+                        tmpSelectedColor = c;
+                    }
+                }
+                int aWeight = maxFiledWeight - minColorWeight;
+                if (actualMaxWeight < aWeight)
+                {
+                    actualMaxWeight = aWeight;
+                    selectedColor = tmpSelectedColor;
+                    selectedField = tmpSelectedFieldNumer;
+                }
+            }
+            Fields[selectedField].Select(selectedColor);
         }
 
         internal void NewGame()
@@ -287,8 +398,7 @@ namespace KTL
                     HintLevel4();
                     break;
                 case 5:
-                    // TODO
-                    MessageBox.Show("Nie zaimplementowano tego poziomu.");
+                    HintLevel5();
                     break;
             }
         }
@@ -392,6 +502,141 @@ namespace KTL
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Z kolejki priorytetowej wybierany jest zbiór elementów oznaczony A o największym priorytecie. 
+        /// Tworzona jest lista par (kolor, waga koloru) oznaczona jako ColorList, zawierająca wszystkie kolory k,
+        /// które można by było użyć w dowolnym ciągu ai ∈ A, psując przy tym warunek bycia tęczą ciągu ai. 
+        /// Dla każdego koloru waga koloru wyliczana jest na podstawie występowalności we wszystkich ciągach ai ∈ kolejka. 
+        /// Jeżeli kolor i wystąpił 5 razy w całej kolejce priorytetowej to wagakoloru_i = 5. 
+        /// Elementy w liście ColorList posortowane są od największej wartości wagi koloru do najmniejszej. 
+        /// Kolory występujące w liście ColorList są unikalne. Dodatkowo tworzona jest lista par (numer pola, waga pola) oznaczona jako FieldList, 
+        /// zawierająca wszystkie numery pól niepokolorowanych występujących w ciągach ai ∈ A. 
+        /// Dla każdego pola waga pola wyliczana jest na podstawie występowalności we wszystkich ciągach ai ∈ kolejka. 
+        /// Jeżeli pole o numerze p występuje 10 razy w kolejce priorytetowej to waga Pola p = 10. 
+        /// Elementy w liście FiledList posortowane są od największej wartości wagi pola do najmniejszej.
+        /// Następuje iteracja po każdym ciągu ai ∈ A. Dla każdego ciągu ai ustawiana jest tzw.tymczasowa waga tmp weight_i, 
+        /// wyliczana na podstawie tmp weight_i = waga pierwszego koloru z listy ColorList nie wykorzystanego w ciągu ai 
+        /// + waga pierwszego pola z listy FieldList znajdującego się w ciągu ai a nie będącego jeszcze pokolorowanym.
+        /// Wybierany jest taki ciąg ai, dla którego waga tmp weight_i jest największa. 
+        /// </summary>
+        private void HintLevel5()
+        {
+            var maxPriorityProgressions = new List<Tuple<List<int>, int>>(); // para(ciąg,waga_ciągu)
+            int maxValidFieldsCount = Progressions[0].Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+            var existingColorsInBestOnesList = new List<Tuple<Color, int>>();
+            var possibleFiledsNumbersInBestOnesList = new List<Tuple<int, int>>();
+            var r = new Random();
+
+            foreach (var a in Progressions)
+            {
+                int aValidFieldsCount = a.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+                if (aValidFieldsCount == maxValidFieldsCount)
+                {
+                    maxPriorityProgressions.Add(Tuple.Create(a, 0));
+                    foreach (var index in a)
+                    {
+                        if (!Fields[index].Enabled)
+                        {
+                            Color c = Fields[index].Color;
+                            // dodajemy kolor, który już wystąpił w pewnym najlepszym ciągu
+                            if (!existingColorsInBestOnesList.Exists(x => x.Item1.Equals(c)))
+                            {
+                                existingColorsInBestOnesList.Add(Tuple.Create(c, 0));
+                            }
+                        }
+                        else
+                        {
+                            // dodajemy pola, które można pokolorować
+                            if (!possibleFiledsNumbersInBestOnesList.Exists(x => x.Item1.Equals(index)))
+                            {
+                                possibleFiledsNumbersInBestOnesList.Add(Tuple.Create(index, 0));
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var a in Progressions)
+            {
+                foreach (var index in a)
+                {
+                    if (!Fields[index].Enabled)
+                    {
+                        // zliczanie wagi koloru
+                        Color c = Fields[index].Color;
+                        for (int i = 0; i < existingColorsInBestOnesList.Count; i++)
+                        {
+                            if (existingColorsInBestOnesList[i].Item1.Equals(c))
+                            {
+                                existingColorsInBestOnesList[i] = Tuple.Create(c, existingColorsInBestOnesList[i].Item2 + 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // zliczanie wagi pola
+                        for (int i = 0; i < possibleFiledsNumbersInBestOnesList.Count; i++)
+                        {
+                            if (possibleFiledsNumbersInBestOnesList[i].Item1.Equals(index))
+                            {
+                                possibleFiledsNumbersInBestOnesList[i] = Tuple.Create(index, possibleFiledsNumbersInBestOnesList[i].Item2 + 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            existingColorsInBestOnesList.Sort((a, b) => b.Item2 - a.Item2);
+            possibleFiledsNumbersInBestOnesList.Sort((a, b) => b.Item2 - a.Item2);
+
+            int selectedField = -1;
+            Color selectedColor = Color.White;
+            int actualMaxWeight = Int32.MinValue;
+            foreach (var a in maxPriorityProgressions)
+            {
+                int maxFiledWeight = Int32.MinValue;
+                int maxColorWeight = Int32.MinValue;
+                int tmpSelectedFieldNumer = -1;
+                Color tmpSelectedColor = Color.White;
+                // iteracja po polach w ciągu
+                var possibleColors = new List<Color>();
+                foreach (var index in a.Item1)
+                {
+                    //pole w ciągu, które nie jest pokolorowane
+                    var possibleFiled = possibleFiledsNumbersInBestOnesList.Find(x => x.Item1 == index && Fields[index].Enabled);
+                    if (possibleFiled != null)
+                    {
+                        if (maxFiledWeight < possibleFiled.Item2)
+                        {
+                            maxFiledWeight = possibleFiled.Item2;
+                            tmpSelectedFieldNumer = index;
+                        }
+                    }
+                    // dodaj kolor
+                    possibleColors.Add(Fields[index].Color);
+                }
+                foreach (var c in possibleColors)
+                {
+                    // waga potencjalnego koloru
+                    var color = existingColorsInBestOnesList.Find(x => x.Item1 == c);
+                    int weight = color != null ? color.Item2 : 0;
+                    if (weight > maxColorWeight)
+                    {
+                        maxColorWeight = weight;
+                        tmpSelectedColor = color != null ? color.Item1 : Colors[r.Next(Colors.Count)];
+                    }
+                }
+                int aWeight = maxFiledWeight + maxColorWeight;
+                if (actualMaxWeight < aWeight)
+                {
+                    actualMaxWeight = aWeight;
+                    selectedColor = tmpSelectedColor;
+                    selectedField = tmpSelectedFieldNumer;
+                }
+            }
+            MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", selectedField + 1, Colors.IndexOf(selectedColor)));
         }
     }
 }
