@@ -42,6 +42,16 @@ namespace KTL
             VerifyVictory();
         }
 
+        public void CreateColors(int colorCount)
+        {
+            Colors = new List<Color>();
+            var r = new Random();
+            for(int i=0; i < colorCount; i++)
+            {
+                Colors.Add(Color.FromArgb(r.Next() | (255 << 24)));
+            }
+        }
+
         /// <summary>
         /// Losowy wybór koloru oraz pola.
         /// kolor - losowo wybrany kolor z dostępnej puli
@@ -151,6 +161,11 @@ namespace KTL
                     }
                 }
             }
+        }
+
+        public void SelectField(int index, Color color)
+        {
+            Fields[index].Disable(color);
         }
 
         /// <summary>

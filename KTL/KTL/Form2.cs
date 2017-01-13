@@ -115,13 +115,13 @@ namespace KTL
         private void FieldClick(object sender, EventArgs e)
         {
             if (victory.HasValue) return;
-            var control = (Button)sender;
-            game.Fields[panelNumbers.Controls.GetChildIndex(control)].Disable(_actualColor);
+            var control = (Control)sender;
+            game.SelectField(panelNumbers.Controls.GetChildIndex(control), _actualColor);
             control.BackColor = _actualColor;
             control.Enabled = false;
             control.ForeColor = Color.FromArgb(255 - control.BackColor.R, 255 - control.BackColor.G, 255 - control.BackColor.B);
             victory = game.VerifyVictory();
-            if(!victory.HasValue) game.ComputerStep();
+            if (!victory.HasValue) game.ComputerStep();
             InitializeNumberPanel();
         }
 
