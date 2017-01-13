@@ -32,13 +32,23 @@ namespace KTL
                 case 3:
                     ComputerStepLevel3();
                     break;
-                default:
-                    MessageBox.Show("Nie zaimplementowano tego poziomu.");
+                case 4:
+                    ComputerStepLevel4();
+                    break;
+                case 5:
+                    // TODO
+                    ComputerStepLevel5();
                     break;
             }
             VerifyVictory();
         }
 
+        /// <summary>
+        /// Losowy wybór koloru oraz pola.
+        /// kolor - losowo wybrany kolor z dostępnej puli
+        /// pole - losowo wybrana liczba i z przedziału [1,n], dla której pole pi jestjeszcze niepokolorowane
+        /// Podczas losowania danych wartości nie jest wykorzystywana kolejka priorytetowa.
+        /// </summary>
         private void ComputerStepLevel1()
         {
             var r = new Random();
@@ -59,6 +69,11 @@ namespace KTL
             }
         }
 
+        /// <summary>
+        /// Losowy wybór dowolnego ciągu znajdującego się w kolejce priorytetowej oznaczonego jako ai. 
+        /// Wybranie dowolnego niepokolorowanego jeszcze pola w ciągu ai oraz dowolnego koloru z dostępnej puli kolorów 
+        /// jeszcze nieużytych w wylosowanym ciągu ai.
+        /// </summary>
         private void ComputerStepLevel2()
         {
             var r = new Random();
@@ -76,7 +91,7 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[changeProgression[i]].Select(Colors[r.Next(Colors.Count - 1)]);
+                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
                         break;
                     }
                 }
@@ -95,7 +110,7 @@ namespace KTL
             var r = new Random();
 
             List<int> probability = new List<int>();
-            int sumValidFieldsCount = 0 ;
+            int sumValidFieldsCount = 0;
             foreach (var a in Progressions)
             {
                 int validFieldsCount1 = a.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
@@ -109,7 +124,7 @@ namespace KTL
             probability.ForEach(index => { index = sumValidFieldsCount - index; });
             // tutaj całe prawdopodobieństwo to rozmiar probability - 1
 
-            for(int i = 1; i< probability.Count; i++)
+            for (int i = 1; i < probability.Count; i++)
             {
                 probability[i] = probability[i - 1] + probability[i];
             }
@@ -132,11 +147,64 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        Fields[changeProgression[i]].Select(Colors[r.Next(Colors.Count - 1)]);
+                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
                         break;
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Z kolejki priorytetowej wybierany jest element z maksymalnym priorytetem. 
+        /// Z wybranego ciągu ai losowane jest jeszcze niepokolorowane pole oraz kolor nie występujący do tej 
+        /// pory w ciągu ai.
+        /// </summary>
+        private void ComputerStepLevel4()
+        {
+            var r = new Random();
+            var changeProgression = Progressions[0];
+            var usedColors = changeProgression.Select(index => Fields[index].Color).ToList();
+            var validColors = Colors.Where(c => !usedColors.Contains(c));
+            double validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+
+            int notChangedValidFields = 0;
+            var r2 = r.NextDouble();
+            for (int i = 0; i < changeProgression.Count; i++)
+            {
+                if (Fields[changeProgression[i]].IsEmpty())
+                {
+                    notChangedValidFields++;
+                    if (notChangedValidFields / validFieldsCount > r2)
+                    {
+                        Fields[changeProgression[i]].Select(validColors.ElementAt(r.Next(validColors.Count() - 1)));
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Z kolejki priorytetowej wybierany jest zbiór elementów oznaczony A o największym priorytecie. 
+        /// Tworzona jest lista par (kolor, waga koloru) oznaczona  jako ColorList,  zawierająca  wszystkie  kolory  k,  
+        /// które  możnaby  było  użyć  w  dowolnym  ciągu ai∈A,  nie  psując  przy  tym  warunku bycia  tęczą  ciągu ai.  
+        /// Dla  każdego  koloru  waga  koloru  wyliczana  jest  na podstawie występowalności we wszystkich ciągach ai∈kolejki. 
+        /// Jeżeli ciągai wystąpił 5 razy w całej kolejce priorytetowej to waga Koloru i= 5. 
+        /// Elementy w liście ColorList posortowane są od najmniejszej wartości wagi koloru do największej. 
+        /// Kolory występujące w liście ColorList są unikalne. Dodatkowo  tworzona  jest  lista  par  
+        /// (numer  pola,  waga  pola)  oznaczonajako FieldList, zawierająca wszystkie numery pól niepokolorowanych 
+        /// występujących  w  ciągach ai∈A.  Dla  każdego  pola  waga  pola  wyliczana jest  na  podstawie  występowalności  
+        /// we  wszystkich  ciągach ai∈kolejki priorytetowej.  Jeżeli pole o numerze p występuje 10 razy 
+        /// w kolejce priorytetowej towaga P = 10. Elementy w liście FiledList posortowane są od największej  
+        /// wartości  wagi  pola  do  najmniejszej.  Następuje  iteracja  po  każdym ciągu ai∈A. 
+        /// Dla każdego ciągu ai ustawiana jest tzw. tymczasowa waga tmpweight_i, wyliczana na podstawie 
+        /// tmpweight_i = minus waga pierw-szego koloru z listyColorListnie wykorzystanego w ciągu_ai
+        //  plus waga pierwszego pola z listy FieldList znajdującego się w ciągu ai a nie będącego jeszcze pokolorowanym.
+        /// Wybierany jest taki ciąg ai, dla którego waga tmpweight_i jest największa.
+        /// Wówczas w swoim ruchu komputer wybiera pole o numerze l oraz j-tykolor.
+        /// </summary>
+        private void ComputerStepLevel5()
+        {
+            MessageBox.Show("Nie zaimplementowano tego poziomu.");
         }
 
         internal void NewGame()
@@ -210,21 +278,94 @@ namespace KTL
                     MessageBox.Show("Brak wskazówek dla gracza");
                     break;
                 case 2:
-                    HintLevel1();
-                    break;
-                case 3:
                     HintLevel2();
                     break;
-                case 4:
+                case 3:
                     HintLevel3();
                     break;
-                default:
+                case 4:
+                    HintLevel4();
+                    break;
+                case 5:
+                    // TODO
                     MessageBox.Show("Nie zaimplementowano tego poziomu.");
                     break;
             }
         }
 
+        /// <summary>
+        ///  Losowy wybór dowolnego ciągu znajdującego się w kolejce priorytetowej oznaczonego jako ai.
+        ///  Wybranie dowolnego niepokolorowanego jeszcze pola w ciągu ai oraz dowolnego koloru z dostępnej 
+        ///  puli kolorów już użytych w wylosowanym ciągu ai. Jeżeli takiego koloru nie ma, 
+        ///  losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
+        /// </summary>
+        private void HintLevel2()
+        {
+            var r = new Random();
+            var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
+            HintUsedColor(changeProgression);
+        }
+
+        /// <summary>
+        ///  Losowy wybór dowolnego ciągu znajdującego się w kolejce priorytetowej oznaczonego jako ai.
+        ///  Prawdopodobieństwo  wylosowania  ciągu ai wynosi sumaxi/∑size(PQ)p=1sumaxi), 
+        ///  gdzie sumaxi to liczba pól niepokolorowanych  w  ciągu ai.  
+        ///  Wybranie  dowolnego  niepokolorowanego  jeszcze pola w wylosowanym ciągu ai oraz 
+        ///  dowolnego koloru z dostępnej puli kolorów już użytych w ciągu ai. 
+        ///  Jeżeli takiego koloru nie ma, losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
+        /// </summary>
         private void HintLevel3()
+        {
+            var r = new Random();
+
+            List<int> probability = new List<int>();
+
+            foreach (var a in Progressions)
+            {
+                int validFieldsCount1 = a.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+                if (probability.Count == 0)
+                {
+                    probability.Add(validFieldsCount1);
+                }
+                else
+                {
+                    probability.Add(validFieldsCount1 + probability[probability.Count - 1]);
+                }
+            }
+
+            // probability[probability.Count - 1] to ilość wszystkich niepokolorowanych pól we wszystkich ciągach w kolejce
+            int selected = r.Next(probability[probability.Count - 1]);
+
+            int aNumber = probability.IndexOf(probability.First(index => (index >= selected)));
+
+            var changeProgression = Progressions[aNumber];
+            var usedColors = changeProgression.Select(index => Fields[index].Color).ToList();
+            var validColors = Colors.Where(c => usedColors.Contains(c));
+            double validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
+            var color = validColors.Count() == 0 ? r.Next(Colors.Count) :
+            Colors.IndexOf(validColors.ToList()[r.Next(validColors.Count() - 1)]);
+            int notChangedValidFields = 0;
+            var r2 = r.NextDouble();
+            for (int i = 0; i < changeProgression.Count; i++)
+            {
+                if (Fields[changeProgression[i]].IsEmpty())
+                {
+                    notChangedValidFields++;
+                    if (notChangedValidFields / validFieldsCount > r2)
+                    {
+                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", changeProgression[i] + 1, color));
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///  Z kolejki priorytetowej wybierany jest element z maksymalnym priorytetem. 
+        ///  Z wybranego ciągu ai losowane jest jeszcze niepokolorowane pole oraz kolor występujący już w ciągu ai.
+        ///  Jeżeli takiego koloru nie ma, losowany jest dowolny kolor ze wszystkich kolorów dostępnych podczas gry.
+        /// </summary>
+        private void HintLevel4()
         {
             HintUsedColor(Progressions[0]);
         }
@@ -246,65 +387,7 @@ namespace KTL
                     notChangedValidFields++;
                     if (notChangedValidFields / validFieldsCount > r2)
                     {
-                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", progression[i]+1, color));
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void HintLevel1()
-        {
-            var r = new Random();
-            var changeProgression = Progressions[r.Next(Progressions.Count - 1)];
-            HintUsedColor(changeProgression);
-        }
-
-        /// <summary>
-        /// Losowy wybór dowolnego ciągu znajdującego się w kolejce priorytetowej
-        /// PQ - oznaczonego jako ai.Prawdopodobieństwo wylosowania ciągu ai
-        /// wynosi sumaxi/suma_wszystkich wolnych pól, gdzie sumaxi to ilość pól niepokolorowanych
-        /// w ciągu ai. Wybranie dowolnego niepokolorowanego jeszcze pola w wylosowanym ciągu ai oraz 
-        /// dowolnego koloru z dostępnej puli kolorów jeszcze nie użytych w ciągu ai.
-        /// </summary>
-        private void HintLevel2()
-        {
-            var r = new Random();
-
-            List<int> probability = new List<int>();
-
-            foreach (var a in Progressions)
-            {
-                int validFieldsCount1 = a.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
-                if (probability.Count == 0)
-                {
-                    probability.Add(validFieldsCount1);
-                }
-                else
-                {
-                    probability.Add(validFieldsCount1 + probability[probability.Count - 1]);
-                }
-            }
-
-            int selected = r.Next(probability[probability.Count - 1]);
-
-            int aNumber = probability.IndexOf(probability.First(index => (index >= selected)));
-
-            var changeProgression = Progressions[aNumber];
-            var usedColors = changeProgression.Select(index => Fields[index].Color).ToList();
-            var validColors = Colors.Where(c => !usedColors.Contains(c));
-            double validFieldsCount = changeProgression.Sum(index => Fields[index].IsEmpty() ? 1 : 0);
-            var color = Colors.IndexOf(validColors.ToList()[r.Next(validColors.Count() - 1)]);
-            int notChangedValidFields = 0;
-            var r2 = r.NextDouble();
-            for (int i = 0; i < changeProgression.Count; i++)
-            {
-                if (Fields[changeProgression[i]].IsEmpty())
-                {
-                    notChangedValidFields++;
-                    if (notChangedValidFields / validFieldsCount > r2)
-                    {
-                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", changeProgression[i], color));
+                        MessageBox.Show(string.Format("pozycja: {0}, kolor: {1}", progression[i] + 1, color));
                         break;
                     }
                 }

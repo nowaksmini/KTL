@@ -33,7 +33,6 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.hintButton = new System.Windows.Forms.Button();
             this.label_c = new System.Windows.Forms.Label();
             this.label_k = new System.Windows.Forms.Label();
             this.label_n = new System.Windows.Forms.Label();
@@ -46,6 +45,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.hintButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -108,19 +108,8 @@
             this.cancelButton.TabIndex = 7;
             this.cancelButton.Text = "cofnij";
             this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Visible = false;
             this.cancelButton.Click += new System.EventHandler(this.hintButton_Click);
-            // 
-            // hintButton
-            // 
-            this.hintButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.hintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 25.25F);
-            this.hintButton.Location = new System.Drawing.Point(366, 0);
-            this.hintButton.Name = "hintButton";
-            this.hintButton.Size = new System.Drawing.Size(75, 80);
-            this.hintButton.TabIndex = 6;
-            this.hintButton.Text = "?";
-            this.hintButton.UseVisualStyleBackColor = true;
-            this.hintButton.Click += new System.EventHandler(this.hintButton_Click);
             // 
             // label_c
             // 
@@ -231,6 +220,18 @@
             this.panel4.Size = new System.Drawing.Size(634, 197);
             this.panel4.TabIndex = 4;
             // 
+            // hintButton
+            // 
+            this.hintButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.hintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 25.25F);
+            this.hintButton.Location = new System.Drawing.Point(366, 0);
+            this.hintButton.Name = "hintButton";
+            this.hintButton.Size = new System.Drawing.Size(75, 80);
+            this.hintButton.TabIndex = 6;
+            this.hintButton.Text = "?";
+            this.hintButton.UseVisualStyleBackColor = true;
+            this.hintButton.Click += new System.EventHandler(this.hintButton_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,7 +272,7 @@
         private System.Windows.Forms.Label label_c;
         private System.Windows.Forms.Label label_k;
         private System.Windows.Forms.Label label_n;
-        private System.Windows.Forms.Button hintButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button hintButton;
     }
 }
