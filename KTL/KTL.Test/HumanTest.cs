@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 
 namespace KTL.Test
@@ -24,15 +25,16 @@ namespace KTL.Test
         public void HintLevel2()
         {
             var game = new Game();
-            game.CreateFields(20);
+            game.CreateFields(5);
             game.K = 4;
-            game.CreateColors(6);
+            game.CreateColors(4);
             game.CreateProgressions();
-            game.HumanLevel = 2;
+            game.HumanLevel = 3;
             game.SelectField(0, game.Colors[0]);
+            game.ComputerLevel = 1;
             game.ComputerStep();
             var hint = game.GetHint(false);
-            Assert.AreEqual(null, hint);
+            Assert.AreEqual(true, game.Progressions.Any(p => p.Contains(hint.Item1-1)));
         }
 
         [TestMethod]

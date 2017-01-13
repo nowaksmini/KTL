@@ -14,7 +14,7 @@ namespace KTL
             Enabled = true;
         }
 
-        internal void Select(Color color)
+        public void Select(Color color)
         {
             Color = color;
             Enabled = false;
